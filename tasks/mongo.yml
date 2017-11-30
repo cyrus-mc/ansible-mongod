@@ -1,0 +1,26 @@
+- name: enable mongodb-org repository
+  template: src=mongodb-org.repo.j2 dest=/etc/yum.repos.d/mongodb-org.repo
+
+- name: yum install/uninstall packages
+  yum: name={{ item.name }} state={{ item.state }}
+  with_items: "{{ mongod_packages }}"
+
+- name: create replicaSet initialization script
+  template: src=replicaSetInit.js.j2 dest=/tmp/replicaSetInit.js
+
+- name: format data volume(s)
+  filesystem: fstype={{ item.fstype }} dev={{ item.device }}
+  with_items: "{{ mongod_volumes }}"
+
+- name: mount data volume(s)
+  mount:
+    name: "{{ item.mount }}"
+    src: "{{ item.device }}"
+    state: mounted
+    fstype: "{{ item.fstype }}"
+    opts: "{{ item.mount_opts }}"
+  with_items: "{{ mongod_volumes }}"
+
+- name: set permissions data volume(s)
+  file: state=directory path={{ item.mount }} recurse=yes owner={{ mongod_user }} group={{ mongod_group }}
+  with_items: "{{ mongod_volumes }}"

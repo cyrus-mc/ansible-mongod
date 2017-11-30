@@ -1,0 +1,25 @@
+---
+mongod_version: 3.2
+# specify minor version else it defaults to latest
+#mongod_version_minor: 1
+
+mongod_user: mongod
+mongod_group: mongod
+
+mongod_packages:
+  - name: fio
+    state: present
+  - name: mongodb-org-{{ mongod_version }}.{{ mongod_version_minor | default('*') }}
+    state: present
+
+mongod_port: 27017
+
+mongod_volumes:
+  - fstype: ext4
+    device: /dev/xvdb
+    mount: /log
+    mount_opts: defaults,auto,noatime,noexec
+  - fstype: ext4
+    device:  /dev/xvdc
+    mount: /data
+    mount_opts: defaults,auto,noatime,noexec

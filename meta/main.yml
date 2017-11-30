@@ -1,0 +1,12 @@
+---
+dependencies: []
+
+galaxy_info:
+  author: mc
+  min_ansible_version: 2.0
+  platforms:
+  - name: Amazon Linux
+    versions:
+    - all
+  galaxy_tags:
+  - mongod

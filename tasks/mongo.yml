@@ -9,18 +9,34 @@
   template: src=replicaSetInit.js.j2 dest=/tmp/replicaSetInit.js
 
 - name: format data volume(s)
-  filesystem: fstype={{ item.fstype }} dev={{ item.device }}
-  with_items: "{{ mongod_volumes }}"
+  filesystem: fstype={{ item.value.fstype }} dev={{ item.value.device }}
+  with_dict: "{{ mongod_volumes }}"
 
 - name: mount data volume(s)
   mount:
-    name: "{{ item.mount }}"
-    src: "{{ item.device }}"
+    name: "{{ item.value.mount }}"
+    src: "{{ item.value.device }}"
     state: mounted
-    fstype: "{{ item.fstype }}"
-    opts: "{{ item.mount_opts }}"
-  with_items: "{{ mongod_volumes }}"
+    fstype: "{{ item.value.fstype }}"
+    opts: "{{ item.value.mount_opts }}"
+  with_dict: "{{ mongod_volumes }}"
 
 - name: set permissions data volume(s)
-  file: state=directory path={{ item.mount }} recurse=yes owner={{ mongod_user }} group={{ mongod_group }}
-  with_items: "{{ mongod_volumes }}"
+  file: state=directory path={{ item.value.mount }} recurse=yes owner={{ mongod_user }} group={{ mongod_group }}
+  with_dict: "{{ mongod_volumes }}"
+
+- name: template mongod.conf
+  template: src=mongod.conf.j2 dest=/etc/mongod.conf
+  notify: restart-mongod
+
+- name: service enable and start
+  service: name=mongod state=started enabled=yes
+
+# configure the replicaSet (if needed)
+- name: check replicaSet status
+  command: /usr/bin/mongo --quiet --eval 'printjson(rs.status().startupStatus === undefined)'
+  register: mongo_result
+
+- name: initialize replicaSet
+  command: /usr/bin/mongo /tmp/replicaSetInit.js
+  when: mongo_result.stdout == 'true'

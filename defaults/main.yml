@@ -14,12 +14,19 @@ mongod_packages:
 
 mongod_port: 27017
 
+# this causes mongod to listen on all interfaces
+mongod_bindip: ""
+
+mongod_rs_enabled: false
+
 mongod_volumes:
-  - fstype: ext4
+  systemlog:
+    fstype: ext4
     device: /dev/xvdb
     mount: /log
     mount_opts: defaults,auto,noatime,noexec
-  - fstype: ext4
+  storage:
+    fstype: ext4
     device:  /dev/xvdc
     mount: /data
     mount_opts: defaults,auto,noatime,noexec

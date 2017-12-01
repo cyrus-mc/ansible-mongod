@@ -5,7 +5,7 @@ var config = {
     version: 1,
     members: [
 {% for host in groups['tag_role_mongo'] %}
-        { _id: {{ loop.index - 1 }}, host: {{ host }}, priority: {{ 3 - loop.index }} }{% if loop.index != 3 %},{% endif %}
+        { _id: {{ loop.index - 1 }}, host: "{{ host }}", priority: {{ 3 - loop.index }} }{% if loop.index != 3 %},{% endif %}
 
 {% endfor %}
     ]
@@ -23,41 +23,41 @@ if (rsStatus.code && rsStatus.code == 94) {
 
 print("Waiting for replica set to be established...")
 
-var startTime = new Date();
-var timeout = 120000; // 2 min
-while (true) {
+//var startTime = new Date();
+//var timeout = 120000; // 2 min
+//while (true) {
     // iterate members, make sure they all have the right state
-    rsStatus = rs.status()
-    var primaryOk, secondaryOk, arbiterOk;
-    for (var i = 0; i < rsStatus.members.length; i++) {
-        var member = rsStatus.members[i];
-        if (member.name == primary) {
-            print("Primary " + "(" + primary + ") has state: " + member.stateStr);
-            primaryOk = member.stateStr == "PRIMARY";
+//    rsStatus = rs.status()
+//    var primaryOk, secondaryOk, arbiterOk;
+//    for (var i = 0; i < rsStatus.members.length; i++) {
+//        var member = rsStatus.members[i];
+//        if (member.name == primary) {
+//            print("Primary " + "(" + primary + ") has state: " + member.stateStr);
+//            primaryOk = member.stateStr == "PRIMARY";
 
-        } else if (member.name == secondary) {
-            print("Secondary " + "(" + secondary + ") has state: " + member.stateStr);
-            secondaryOk = member.stateStr == "SECONDARY";
+//       } else if (member.name == secondary) {
+//            print("Secondary " + "(" + secondary + ") has state: " + member.stateStr);
+//            secondaryOk = member.stateStr == "SECONDARY";
 
-        } else if (member.name == arbiter) {
-            print("Arbiter " + "(" + arbiter + ") has state: " + member.stateStr);
-            arbiterOk = member.stateStr == "ARBITER";
+//        } else if (member.name == arbiter) {
+//            print("Arbiter " + "(" + arbiter + ") has state: " + member.stateStr);
+//            arbiterOk = member.stateStr == "ARBITER";
 
-        } else {
-            print("Unexpected member encountered: " + member.name);
-        }
-    }
+//        } else {
+//            print("Unexpected member encountered: " + member.name);
+//        }
+//    }
 
-    if (primaryOk && secondaryOk && arbiterOk) {
-        print("All members in expected state");
-        break;
-    }
+//    if (primaryOk && secondaryOk && arbiterOk) {
+//        print("All members in expected state");
+//        break;
+//    }
 
-    var elapsedTime = new Date() - startTime;
-    if (elapsedTime > timeout) {
-        throw "Timed out waiting for replica set to be established";
-    } else {
-        print("All members not in expected state, waiting...");
-        sleep(5000);
-    }
-}
+//    var elapsedTime = new Date() - startTime;
+//    if (elapsedTime > timeout) {
+//        throw "Timed out waiting for replica set to be established";
+//    } else {
+//        print("All members not in expected state, waiting...");
+//        sleep(5000);
+//    }
+//}

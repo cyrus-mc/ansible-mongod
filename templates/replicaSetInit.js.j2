@@ -4,7 +4,7 @@ var config = {
     _id: "rs0",
     version: 1,
     members: [
-{% for host in groups['tag_role_mongo'] %}
+{% for host in mongod_servers %}
         { _id: {{ loop.index - 1 }}, host: "{{ host }}", priority: {{ 3 - loop.index }} }{% if loop.index != 3 %},{% endif %}
 
 {% endfor %}

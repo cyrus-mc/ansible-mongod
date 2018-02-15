@@ -17,6 +17,7 @@ mongod_port: 27017
 # this causes mongod to listen on all interfaces
 mongod_bindip: ""
 
+mongod_servers: []
 mongod_rs_enabled: false
 
 mongod_volumes:
